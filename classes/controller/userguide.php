@@ -174,6 +174,32 @@ class Controller_Userguide extends Controller_Template {
 			$this->template->content = View::factory('userguide/api/class')
 				->set('doc', Kodoc::factory($class))
 				->set('route', $this->request->route);
+				
+			if (Kohana::config('userguide.search') === TRUE)
+			{
+				$index = Kohana_Kodoc_Search::instance()->index();
+				
+				// Delete the old page if it exists
+				$hits = $index->find('path:'.'api/'.$class);
+				foreach ($hits as $hit)
+				{
+					$index->delete($hit->id);
+				}
+				$index->commit();
+
+				set_time_limit ( 120 );
+
+				// Create this page
+				$doc = new Zend_Search_Lucene_Document();
+				$doc->addField(Zend_Search_Lucene_Field::Text('path','api/'.$class));
+				$doc->addField(Zend_Search_Lucene_Field::Text('title',$class));
+				$doc->addField(Zend_Search_Lucene_Field::UnStored('contents',View::factory('userguide/api/class-search')->set('doc',Kodoc::factory($class))));
+				
+				$index->addDocument($doc);
+				$index->commit();
+				$index->optimize();
+				
+			}
 		}
 		else
 		{
@@ -229,6 +255,35 @@ class Controller_Userguide extends Controller_Template {
 		$this->request->headers['Content-Type']   = File::mime_by_ext($ext);
 		$this->request->headers['Content-Length'] = filesize($file);
 		$this->request->headers['Last-Modified']  = date('r', filemtime($file));
+	}
+
+	public function action_search()
+	{
+		$view = View::factory('userguide/search');
+		
+		$this->template->title = "Search";
+		$this->template->bind('content',$view);
+		$this->template->bind('breadcrumb', $breadcrumb);
+		$breadcrumb = array();
+		$breadcrumb[$this->guide->uri(array('page' => NULL))] = __('User Guide');
+		$breadcrumb[] = 'Search';
+		$this->template->menu = '';
+		
+		$query = "h1";
+		
+		$index = Kohana_Kodoc_Search::instance()->index();
+		
+		try
+		{
+			$query = Zend_Search_Lucene_Search_QueryParser::parse($query);
+		}
+		catch (Zend_Search_Lucene_Search_QueryParserException $e)
+		{
+			echo "Query syntax error: " . $e->getMessage() . "\n";
+		}
+		
+		$view->hits = $index->find($query);
+		
 	}
 
 	public function after()
