@@ -174,32 +174,6 @@ class Controller_Userguide extends Controller_Template {
 			$this->template->content = View::factory('userguide/api/class')
 				->set('doc', Kodoc::factory($class))
 				->set('route', $this->request->route);
-				
-			if (Kohana::config('userguide.search') === TRUE)
-			{
-				$index = Kohana_Kodoc_Search::instance()->index();
-				
-				// Delete the old page if it exists
-				$hits = $index->find('path:'.'api/'.$class);
-				foreach ($hits as $hit)
-				{
-					$index->delete($hit->id);
-				}
-				$index->commit();
-
-				set_time_limit ( 120 );
-
-				// Create this page
-				$doc = new Zend_Search_Lucene_Document();
-				$doc->addField(Zend_Search_Lucene_Field::Text('path','api/'.$class));
-				$doc->addField(Zend_Search_Lucene_Field::Text('title',$class));
-				$doc->addField(Zend_Search_Lucene_Field::UnStored('contents',View::factory('userguide/api/class-search')->set('doc',Kodoc::factory($class))));
-				
-				$index->addDocument($doc);
-				$index->commit();
-				$index->optimize();
-				
-			}
 		}
 		else
 		{
@@ -269,7 +243,7 @@ class Controller_Userguide extends Controller_Template {
 		$breadcrumb[] = 'Search';
 		$this->template->menu = '';
 		
-		$query = "h1";
+		$query = "kohana";
 		
 		$index = Kohana_Kodoc_Search::instance()->index();
 		
@@ -284,6 +258,37 @@ class Controller_Userguide extends Controller_Template {
 		
 		$view->hits = $index->find($query);
 		
+	}
+	
+	public function action_index($class)
+	{
+		if (Kohana::config('userguide.search') === TRUE)
+		{
+			$index = Kohana_Kodoc_Search::instance()->index();
+			
+			// Delete the old page if it exists
+			$hits = $index->find('path:'.'api/'.$class);
+			foreach ($hits as $hit)
+			{
+				$index->delete($hit->id);
+			}
+			$index->commit();
+
+			set_time_limit ( 120 );
+
+			// Create this page
+			$doc = new Zend_Search_Lucene_Document();
+			$doc->addField(Zend_Search_Lucene_Field::Text('path','api/'.$class));
+			$doc->addField(Zend_Search_Lucene_Field::Text('title',$class));
+			$doc->addField(Zend_Search_Lucene_Field::Unstored('contents',View::factory('userguide/api/class-search')->set('doc',Kodoc::factory($class))));
+			
+			$index->addDocument($doc);
+			$index->commit();
+			unset($doc);
+			$index->optimize();
+			
+			die('indexed.');
+		}
 	}
 
 	public function after()

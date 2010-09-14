@@ -19,13 +19,18 @@ if (Kohana::config('userguide.api_browser') === TRUE)
 		));
 }
 
-// API Browser, if enabled
+// search
 if (Kohana::config('userguide.search') === TRUE)
 {
 	Route::set('docs/search', 'guide/search')
 		->defaults(array(
 			'controller' => 'userguide',
 			'action'     => 'search',
+		));
+	Route::set('docs/index', 'guide/index/<class>')
+		->defaults(array(
+			'controller' => 'userguide',
+			'action'     => 'index',
 		));
 }
 

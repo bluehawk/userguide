@@ -35,7 +35,7 @@
 <?php echo __('Methods'); ?>
 
 <?php foreach ($methods as $method): ?>
-<?php echo View::factory('userguide/api/method-search')->set('doc', $method)->set('route', $route) ?>
+<?php echo View::factory('userguide/api/method-search')->set('doc', $method) ?>
 <?php endforeach ?>
 
 <?php endif ?>

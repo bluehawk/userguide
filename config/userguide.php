@@ -13,7 +13,7 @@ return array
 	'api_packages' => TRUE,
 	
 	// Whether to enable using Zend_Search_Lucene for searching
-	'search'       => FALSE,
+	'search'       => TRUE,
 	
 	// Modules array for User Guide section.  Each module adds itself to this array.  This does not affect whether they show up in the API
 	'modules' => array(),
