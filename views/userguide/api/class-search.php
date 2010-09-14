@@ -1,41 +1,52 @@
+<?php
 
-<?php echo $doc->modifiers, $doc->class->name ?>
-	
-<?php echo $doc->description ?>
+if ($modifiers = $class->getModifiers())
+{
+	echo implode(' ', Reflection::getModifierNames($modifiers));
+}
 
-<?php if ($doc->tags): ?>
+echo $class->name;
 
-<?php foreach ($doc->tags as $name => $set): ?>
-<?php echo $name ?> - <?php echo implode(',',$set) . "\n"; ?>
-<?php endforeach ?>
+echo "\n\n";
 
-<?php endif; ?>
+$parent = $class;
 
-<?php if ($doc->constants): ?>
+do
+{
+	if ($comment = $parent->getDocComment())
+	{
+		// Found a description for this class
+		break;
+	}
+}
+while ($parent = $parent->getParentClass());
 
-<?php echo __('Constants'); ?>
+// Normalize all new lines to \n
+$comment = str_replace(array("\r\n", "\n"), "\n", $comment);
 
-<?php foreach ($doc->constants as $name => $value): ?>
-<?php echo $name ?>
-<?php endforeach; ?>
+// Remove the phpdoc open/close tags and split
+$comment = array_slice(explode("\n", $comment), 1, -1);
 
-<?php endif ?>
+foreach ($comment as $i => $line)
+{
+	// Remove all leading whitespace
+	$line = preg_replace('/^\s*\* ?/m', '', $line);
 
-<?php if ($properties = $doc->properties()): ?>
-<?php echo __('Properties'); ?>
+	// Search this line for a tag
+	if (preg_match('/^@(\S+)(?:\s*(.+))?$/', $line, $matches))
+	{
+		// This is a tag line
+		unset($comment[$i]);
 
-<?php foreach ($properties as $prop): ?>
-<?php echo $prop->modifiers ?> <?php echo $prop->type ?> $<?php echo $prop->property->name ?> - <?php echo $prop->description ?>
+	}
+	else
+	{
+		// Overwrite the comment line
+		$comment[$i] = (string) $line;
+	}
+}
 
-<?php endforeach ?>
+// Concat the comment lines back to a block of text
+$comment = trim(implode("\n", $comment));
 
-<?php endif ?>
-
-<?php if ($methods = $doc->methods()): ?>
-<?php echo __('Methods'); ?>
-
-<?php foreach ($methods as $method): ?>
-<?php echo View::factory('userguide/api/method-search')->set('doc', $method) ?>
-<?php endforeach ?>
-
-<?php endif ?>
+echo $comment;

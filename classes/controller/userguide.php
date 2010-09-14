@@ -264,6 +264,15 @@ class Controller_Userguide extends Controller_Template {
 	{
 		if (Kohana::config('userguide.search') === TRUE)
 		{
+			try
+			{
+				$ref_class = new ReflectionClass($class);
+			}
+			catch (exception $e)
+			{
+				die ('couldnt create reflection class');
+			}
+			
 			$index = Kohana_Kodoc_Search::instance()->index();
 			
 			// Delete the old page if it exists
@@ -274,17 +283,47 @@ class Controller_Userguide extends Controller_Template {
 			}
 			$index->commit();
 
-			set_time_limit ( 120 );
-
-			// Create this page
+			// Create the page for the class
 			$doc = new Zend_Search_Lucene_Document();
 			$doc->addField(Zend_Search_Lucene_Field::Text('path','api/'.$class));
 			$doc->addField(Zend_Search_Lucene_Field::Text('title',$class));
-			$doc->addField(Zend_Search_Lucene_Field::Unstored('contents',View::factory('userguide/api/class-search')->set('doc',Kodoc::factory($class))));
+			echo $view = View::factory('userguide/api/class-search')->set('class',$ref_class);
+			echo "\n\n\n";
+			$doc->addField(Zend_Search_Lucene_Field::Unstored('contents',$view));
 			
 			$index->addDocument($doc);
 			$index->commit();
 			unset($doc);
+			
+			// Loop through methods and add them
+			if ($methods = $ref_class->getMethods())
+			{
+				foreach ($methods as $method)
+				{
+					
+					// Delete the old page if it exists
+					$hits = $index->find('path:'.'api/'.$class.'#'.$method);
+					foreach ($hits as $hit)
+					{
+						$index->delete($hit->id);
+					}
+					
+					//$doc = new Zend_Search_Lucene_Document();
+					//$doc->addField(Zend_Search_Lucene_Field::Text('path','api/'.$class.'#'.$method));
+					//$doc->addField(Zend_Search_Lucene_Field::Text('title',$class.'::'.$method));
+					echo $view = View::factory('userguide/api/method-search')->set('method',$method);
+					echo "\n\n\n";
+					//$doc->addField(Zend_Search_Lucene_Field::Unstored('contents',$view));
+					
+					//$index->addDocument($doc);
+					//$index->commit();
+					//unset($doc);
+					
+					die('wtf');
+				}
+			}
+			
+			
 			$index->optimize();
 			
 			die('indexed.');
