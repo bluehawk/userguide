@@ -24,7 +24,14 @@ class Kohana_Kodoc_Search  {
 		
 		include(Kohana::find_file('vendor','Zend/Search/Lucene'));
 		
-		self::$_index = Zend_Search_Lucene::open(APPPATH.'data/userguide');
+		try
+		{
+			self::$_index = Zend_Search_Lucene::open(APPPATH.'data/userguide');
+		}
+		catch (Zend_Search_Lucene_Exception $e)
+		{
+			self::$_index = Zend_Search_Lucene::create(APPPATH.'data/userguide');
+		}
     }
 
     public static function instance() 
