@@ -64,7 +64,7 @@ class Controller_Userguide extends Controller_Template {
 	{
 		$this->request->status = 404;
 		$this->template->title = "Userguide - Error";
-		$this->template->content = View::factory('userguide/error',array('message' => $message));
+		$this->template->content = View::factory('userguide/error', array('message' => $message));
 
 		// If we are in a module and that module has a menu, show that, otherwise use the index page menu
 		if ($module = $this->request->param('module') AND $menu = $this->file($module.'/menu'))
@@ -82,8 +82,8 @@ class Controller_Userguide extends Controller_Template {
 		}
 		else
 		{
-			$this->template->menu = View::factory('userguide/menu',array('modules' => Kohana::config('userguide.modules')));
-			$this->template->breadcrumb = array($this->guide->uri() => 'User Guide','Error');
+			$this->template->menu = View::factory('userguide/menu', array('modules' => Kohana::config('userguide.modules')));
+			$this->template->breadcrumb = array($this->guide->uri() => 'User Guide', 'Error');
 		}
 	}
 

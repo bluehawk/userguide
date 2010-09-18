@@ -204,7 +204,7 @@ class Kohana_Kodoc_Markdown extends MarkdownExtra_Parser {
 			list($class, $method) = explode('::', $link, 2);
 			
 			// Trim the optional parenthesis for methods
-			$method = rtrim($method,'()');
+			$method = rtrim($method, '()');
 
 			// If the first char is a $ its a property, e.g. Kohana::$base_url
 			if ($method[0] === '$')

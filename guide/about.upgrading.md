@@ -198,7 +198,7 @@ For example, in 2.x these regexes:
 
 Would map the uri `controller/id/method` to `controller/method/id`.  In 3.0 you'd use:
 
-	Route::set('reversed','(<controller>(/<id>(/<action>)))')
+	Route::set('reversed', '(<controller>(/<id>(/<action>)))')
 			->defaults(array('controller' => 'posts', 'action' => 'index'));
 
 [!!] Each uri should have be given a unique name (in this case it's `reversed`), the reasoning behind this is explained in [the url tutorial](tutorials.urls).

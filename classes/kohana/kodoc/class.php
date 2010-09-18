@@ -111,7 +111,7 @@ class Kohana_Kodoc_Class extends Kodoc {
 	{
 		$methods = $this->class->getMethods();
 
-		usort($methods, array($this,'_method_sort'));
+		usort($methods, array($this, '_method_sort'));
 
 		foreach ($methods as $key => $method)
 		{
@@ -124,11 +124,11 @@ class Kohana_Kodoc_Class extends Kodoc {
 	protected function _method_sort($a, $b)
 	{
 		/*
-		echo kohana::debug('a is '.$a->class.'::'.$a->name,'b is '.$b->class.'::'.$b->name,
-						   'are the classes the same?', $a->class == $b->class,'if they are, the result is:',strcmp($a->name, $b->name),
-						   'is a this class?', $a->name == $this->class->name,-1,
-						   'is b this class?', $b->name == $this->class->name,1,
-						   'otherwise, the result is:',strcmp($a->class, $b->class)
+		echo kohana::debug('a is '.$a->class.'::'.$a->name, 'b is '.$b->class.'::'.$b->name,
+						   'are the classes the same?', $a->class == $b->class, 'if they are, the result is:', strcmp($a->name, $b->name),
+						   'is a this class?', $a->name == $this->class->name, -1,
+						   'is b this class?', $b->name == $this->class->name, 1,
+						   'otherwise, the result is:', strcmp($a->class, $b->class)
 						   );
 		*/
 

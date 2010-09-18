@@ -19,12 +19,12 @@
 	<div id="header">
 		<div class="container clearfix">
 			<div id="logo">
-				<?php echo HTML::image(Route::get('docs/media')->uri(array('file'=>'img/kohana.png'))) ?>
+				<?php echo HTML::image(Route::get('docs/media')->uri(array('file' => 'img/kohana.png'))) ?>
 			</div>
 			<div id="mode">
 				<?php $route = Request::instance()->route; ?>
-				<?php echo HTML::anchor(Route::get('docs/guide')->uri(), 'User Guide',Route::get('docs/guide') == $route ? array('class' => 'current'):array()) ?>
-				<?php echo HTML::anchor(Route::get('docs/api')->uri(), 'API Browser',Route::get('docs/api') == $route ? array('class' => 'current'):array()) ?>
+				<?php echo HTML::anchor(Route::get('docs/guide')->uri(), 'User Guide', Route::get('docs/guide') == $route ? array('class' => 'current'):array()) ?>
+				<?php echo HTML::anchor(Route::get('docs/api')->uri(), 'API Browser', Route::get('docs/api') == $route ? array('class' => 'current'):array()) ?>
 			</div>
 		</div>
 	</div>
