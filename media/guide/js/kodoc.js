@@ -77,13 +77,13 @@ $(document).ready(function()
 				if (menu.is(':visible'))
 				{
 					// hide menu
-					menu.stop(true,true).slideUp('fast');
+					menu.show();
 					link.addClass('toggle-close').removeClass('toggle-open');
 				}
 				else
 				{
 					// show menu
-					menu.stop(true,true).slideDown('fast');
+					menu.hide();
 					link.addClass('toggle-open').removeClass('toggle-close');
 				}
 				return
